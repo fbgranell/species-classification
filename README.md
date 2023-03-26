@@ -70,6 +70,7 @@ def inception_module(input_,filters_1x1,filters_3x3_pre, filters_3x3, filters_5x
 
 The model was then created by using tensorflow and the inception blocked I wrote. Now we were able to train model for 60 epochs using stochastic gradient descent (SGD) as the optimizer and categorical cross-entropy as the loss function, as well as a batch size of 32. I applied early stopping to prevent overfitting, and used a validation set to monitor the model and selected the best number of epochs.
 
+<a id='section4'></a>
 # 4. Results 
 
 After implementing and fine-tuning the GoogLeNet neural network, I tested its performance on a validation dataset to evaluate its accuracy. I trained the model with different numbers of epochs and I found that increasing the number of epochs resulted in higher accuracy up to a certain point, after which the accuracy plateaued. Eventually, I settled on 60 epochs as it yielded the best performance on the validation set.
@@ -78,11 +79,11 @@ After implementing and fine-tuning the GoogLeNet neural network, I tested its pe
 
 Upon testing the final model on a separate test set, I observed that it performed exceptionally well, achieving a **test accuracy of 0.93**. This indicates that the model has a high level of accuracy in classifying images, and that it is capable of generalizing well to new, unseen data. These results are consistent with our expectations and suggest that the GoogLeNet neural network is a reliable and effective tool for image classification tasks.
 
-<a id='section6'></a>
-# 6. References
+<a id='section5'></a>
+# 5. References
 The dataset used in this project was obtained from Kaggle, a popular online community for data scientists and machine learning practitioners. Specifically, we used the <a href="https://www.kaggle.com/gpiosenka/100-bird-species">Birds 510 Species</a> dataset, which contains high-quality images of 500 different bird species.
 
 
-<a id='section7'></a>
-# 7. License
+<a id='section6'></a>
+# 6. License
 This project is licensed under the **MIT License**, which permits the use, distribution, and modification of the code and materials with proper attribution and the sharing of any modifications made under the same license.
