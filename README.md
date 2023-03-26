@@ -1,4 +1,4 @@
-# species-classification
+# 510 Species Classification
 
 <a href="https://fbgranell.com/projects/species-classifier/"><img src="./images/header_rounded.png"></a>
 
