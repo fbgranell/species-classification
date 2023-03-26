@@ -1,13 +1,15 @@
 import os
 #os.environ['TF_LIBRARY_PATH'] = 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/nvvm/libdevice/libdevice.10.bc'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+import logging
+logging.getLogger('tensorflow').setLevel(logging.ERROR)
 import tensorflow as tf
 import numpy as np
 import pandas as pd
 
 from keras.layers import Conv2D, MaxPool2D, Dropout, \
 Dense, Input, GlobalAveragePooling2D, AveragePooling2D
-
+from sklearn.metrics import f1_score
 import regex as re
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -176,10 +178,55 @@ while True:
         break
     elif name.lower() == "scratch":
         break
+    elif name.lower() == "test":
+        checkpoint_path = "train_cp/cp-0060.ckpt"
+        model.load_weights(checkpoint_path)
+
+        test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+        test_generator = test_datagen.flow_from_directory(
+        directory='../data/test',
+        target_size=(size, size),
+        batch_size=32,
+        class_mode='categorical'
+        )
+        # Evaluate the model on the test dataset
+        test_results = model.evaluate(test_generator, verbose=2)
+
+        # Print the test loss and accuracy separately
+        print('Test accuracy:', test_results[4])
+        exit()
+
+    elif name.lower() == "v3":
+        base_model = tf.keras.applications.inception_v3.InceptionV3(input_shape = (size,size,3), weights='imagenet', include_top=False)
+        
+        # freeze the pre-trained layers
+        for layer in base_model.layers:
+            layer.trainable = False
+
+        # add a global spatial average pooling layer
+        x =  tf.keras.layers.Flatten()(base_model.output)
+    
+        # add a fully connected layer
+        x = tf.keras.layers.Dense(1024, activation='relu')(x)
+
+        # add dropout
+        x = tf.keras.layers.Dropout(0.2)(x)
+
+        # add a final softmax layer for classification
+        predictions = tf.keras.layers.Dense(510, activation='softmax')(x)
+
+        # create the full model
+        model =  tf.keras.Model(inputs=base_model.input, outputs=predictions)
+
+
+        # compile the model
+        model.compile(loss=['categorical_crossentropy', 'categorical_crossentropy', 'categorical_crossentropy'],
+              loss_weights=[1, 0.3, 0.3], optimizer=tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9, nesterov=False), metrics=['accuracy'])
+        break
     else:
         pass
 
-history = model.fit(train_generator, epochs=100, validation_data = val_generator, callbacks=[cp_callback], verbose = 2)
+history = model.fit(train_generator, epochs=5, validation_data = val_generator, callbacks=[cp_callback], verbose = 2)
 
 # summarize history for loss
 plt.plot(history.history['output_accuracy'])
